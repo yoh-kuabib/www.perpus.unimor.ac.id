@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perpustakaan</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+        .header {
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            height: 100%;
+            padding: 20px;
+            display: none; /* Hide sidebar initially */
+        }
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            margin: 10px 0;
+        }
+        .sidebar a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            margin-left: 250px; /* Same as sidebar width */
+            padding: 20px;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .table-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>Perpustakaan</h2>
+    </div>
+
+    <div class="login-container" id="loginContainer">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Nama Lengkap</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+        <div id="loginMessage"></div>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <h2>Dashboard</h2>
+        <a href="#" onclick="showSection('dataMahasiswa')">Data Mahasiswa</a>
+        <a href="#" onclick="showSection('dataBuku')">Data Buku</a>
+        <a href="#" onclick="showSection('peminjamanBuku')">Peminjaman Buku</a>
+        <a href="#" onclick="showSection('pengembalianBuku')">Pengembalian Buku</a>
+        <a href="#" onclick="showSection('dataPinjam')">Data Pinjam Buku</a>
+        <a href="#" onclick="logout()">Logout</a>
+    </div>
+
+    <div class="container">
+        <div class="main-content" id="dataMahasiswa" style="display: none;">
+            <h1>Data Mahasiswa</h1>
+            <form id="mahasiswaForm" class="mb-4">
+                <div class="form-group">
+                    <label for="npm">NPM</label>
+                    <input type="text" class="form-control" id="npm" name="npm" required>
+                </div>
+                <div class="form-group">
+                    <label for="namaMahasiswa">Nama Lengkap</label>
+                    <input type="text" class="form-control" id="namaMahasiswa" name="namaMahasiswa" required>
+                </div>
+                <div class="form-group">
+                    <label for="prodi">Program Studi</label>
+                    <input type="text" class="form-control" id="prodi" name="prodi" required>
+                </div>
+                <div class="form-group">
+                    <label for="semester">Semester</label>
+                    <input type="number" class="form-control" id="semester" name="semester" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Tambah Mahasiswa</button>
+            </form>
+            <div class="table-container">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>NPM</th>
+                            <th>Nama</th>
+                            <th>Prodi</th>
+                            <th>Semester</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataMahasiswaBody">
+                        <!-- Data Mahasiswa akan ditambahkan di sini -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="main-content" id="dataBuku" style="display: none;">
+            <h1>Data Buku</h1>
+            <form id="bukuForm" class="mb-4">
+                <div class="form-group">
+                    <label for="judulBuku">Judul Buku</label>
+                    <input type="text" class="form-control" id="judulBuku" name="judulBuku" required>
+                </div>
+                <div class="form-group">
+                    <label for="pengarang">Pengarang</label>
+                    <input type="text" class="form-control" id="pengarang" name="pengarang" required>
+                </div>
+                <div class="form-group">
+                    <label for="tahunTerbit">Tahun Terbit</label>
+                    <input type="number" class="form-control" id="tahunTerbit" name="tahunTerbit" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Tambah Buku</button>
+            </form>
+            <div class="table-container">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Judul Buku</th>
+                            <th>Pengarang</th>
+                            <th>Tahun Terbit</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataBukuBody">
+                        <!-- Data Buku akan ditambahkan di sini -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="main-content" id="peminjamanBuku" style="display: none;">
+            <h1>Peminjaman Buku</h1>
+            <form id="peminjamanForm">
+                <div class="form-group">
+                    <label for="peminjamNPM">NPM</label>
+                    <input type="text" class="form-control" id="peminjamNPM" name="peminjamNPM" required>
+                </div>
+                <div class="form-group">
+                    <label for="judulBukuPinjam">Judul Buku</label>
+                    <input type="text" class="form-control" id="judulBukuPinjam" name="judulBukuPinjam" required>
+                </div>
+                <div class="form-group">
+                    <label for="tanggalPinjam">Tanggal Pinjam</label>
+                    <input type="date" class="form-control" id="tanggalPinjam" name="tanggalPinjam" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Pinjam Buku</button>
+            </form>
+            <div id="messagePeminjaman"></div>
+        </div>
+
+        <div class="main-content" id="pengembalianBuku" style="display: none;">
+            <h1>Pengembalian Buku</h1>
+            <form id="pengembalianForm">
+                <div class="form-group">
+                    <label for="peminjamNPMPengembalian">NPM</label>
+                    <input type="text" class="form-control" id="peminjamNPMPengembalian" name="peminjamNPMPengembalian" required>
+                </div>
+                <div class="form-group">
+                    <label for="judulBukuKembali">Judul Buku</label>
+                    <input type="text" class="form-control" id="judulBukuKembali" name="judulBukuKembali" required>
+                </div>
+                <div class="form-group">
+                    <label for="tanggalPengembalian">Tanggal Pengembalian</label>
+                    <input type="date" class="form-control" id="tanggalPengembalian" name="tanggalPengembalian" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Kembalikan Buku</button>
+            </form>
+            <div id="messagePengembalian"></div>
+        </div>
+
+        <div class="main-content" id="dataPinjam" style="display: none;">
+            <h1>Data Pinjam Buku</h1>
+            <div class="table-container">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Kode Pinjam</th>
+                            <th>Anggota</th>
+                            <th>Kategori</th>
+                            <th>Judul</th>
+                            <th>Tanggal Pinjam</th>
+                            <th>Tanggal Kembali</th>
+                            <th>Denda</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataPinjamBody">
+                        <tr>
+                            <td colspan="9" class="text-center">No data available in table</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulasi data mahasiswa
+        const mahasiswaData = [];
+
+        // Simulasi data buku
+        const bukuData = [];
+
+        // Logic for login
+        const users = [
+            { name: "Yohana Antanik Kuabib", password: "51230082"}
+        ];
+
+        const pinjamanData = [];
+
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const user = users.find(u => u.name === username && u.password === password);
+
+            if (user) {
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('sidebar').style.display = 'block';
+                showSection('dataMahasiswa'); // Tampilkan Data Mahasiswa setelah login
+            } else {
+                document.getElementById('loginMessage').innerText = "Username atau password salah!";
+            }
+        });
+
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.main-content');
+            sections.forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+
+            // Jika data pinjam ditampilkan, refresh tabel
+            if (sectionId === 'dataPinjam') {
+                refreshPinjamanTable();
+            }
+        }
+
+        function logout() {
+            alert("Anda telah keluar.");
+            document.getElementById('loginContainer').style.display = 'flex';
+            document.getElementById('sidebar').style.display = 'none';
+        }
+
+        // Event listener untuk form mahasiswa
+        document.getElementById('mahasiswaForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const npm = document.getElementById('npm').value;
+            const nama = document.getElementById('namaMahasiswa').value;
+            const prodi = document.getElementById('prodi').value;
+            const semester = document.getElementById('semester').value;
+
+            // Tambahkan data mahasiswa ke array
+            mahasiswaData.push({ npm, nama, prodi, semester });
+            refreshMahasiswaTable();
+
+            this.reset(); // Reset form
+        });
+
+        // Fungsi untuk menyegarkan tabel data mahasiswa
+        function refreshMahasiswaTable() {
+            const tbody = document.getElementById('dataMahasiswaBody');
+            tbody.innerHTML = ''; // Bersihkan tabel
+
+            mahasiswaData.forEach((mhs, index) => {
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${mhs.npm}</td>
+                        <td>${mhs.nama}</td>
+                        <td>${mhs.prodi}</td>
+                        <td>${mhs.semester}</td>
+                    </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // Event listener untuk form buku
+        document.getElementById('bukuForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const judul = document.getElementById('judulBuku').value;
+            const pengarang = document.getElementById('pengarang').value;
+            const tahunTerbit = document.getElementById('tahunTerbit').value;
+
+            // Tambahkan data buku ke array
+            bukuData.push({ judul, pengarang, tahunTerbit });
+            refreshBukuTable();
+
+            this.reset(); // Reset form
+        });
+
+        // Fungsi untuk menyegarkan tabel data buku
+        function refreshBukuTable() {
+            const tbody = document.getElementById('dataBukuBody');
+            tbody.innerHTML = ''; // Bersihkan tabel
+
+            bukuData.forEach((buku, index) => {
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${buku.judul}</td>
+                        <td>${buku.pengarang}</td>
+                        <td>${buku.tahunTerbit}</td>
+                    </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // Event listener untuk form peminjaman
+        document.getElementById('peminjamanForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const npm = document.getElementById('peminjamNPM').value;
+            const judulBuku = document.getElementById('judulBukuPinjam').value;
+            const tanggalPinjam = document.getElementById('tanggalPinjam').value;
+
+            const message = `Buku berhasil dipinjam: NPM: ${npm}, Judul Buku: ${judulBuku}, Tanggal Pinjam: ${tanggalPinjam}`;
+            document.getElementById('messagePeminjaman').innerHTML = `
+                <div class="alert alert-success" role="alert">
+                    ${message}
+                </div>`;
+
+            // Tambahkan data peminjaman ke array
+            pinjamanData.push({
+                kodePinjam: pinjamanData.length + 1,
+                anggota: npm,
+                kategori: "Umum",  // Sesuaikan kategori sesuai kebutuhan
+                judul: judulBuku,
+                tanggalPinjam: tanggalPinjam,
+                tanggalPengembalian: tanggalPengembalian,
+                denda: 0
+            });
+
+            this.reset();
+        });
+
+        // Event listener untuk form pengembalian
+        document.getElementById('pengembalianForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const npm = document.getElementById('peminjamNPMPengembalian').value;
+            const judulBuku = document.getElementById('judulBukuKembali').value;
+            const tanggalPengembalian = document.getElementById('tanggalPengembalian').value;
+
+            const pinjaman = pinjamanData.find(p => p.anggota === npm && p.judul === judulBuku);
+            if (pinjaman) {
+                const message = `Buku berhasil dikembalikan: NPM: ${npm}, Judul Buku: ${judulBuku}, Tanggal Pengembalian: ${tanggalPengembalian}`;
+                document.getElementById('messagePengembalian').innerHTML = `
+                    <div class="alert alert-success" role="alert">
+                        ${message}
+                    </div>`;
+
+                // Update data peminjaman dengan tanggal kembali
+                pinjaman.tanggalKembali = tanggalPengembalian;
+            } else {
+                document.getElementById('messagePengembalian').innerHTML = `
+                    <div class="alert alert-danger" role="alert">
+                        Peminjaman tidak ditemukan!
+                    </div>`;
+            }
+
+            this.reset();
+        });
+
+        // Fungsi untuk menyegarkan tabel data pinjam
+        function refreshPinjamanTable() {
+            const tbody = document.getElementById('dataPinjamBody');
+            tbody.innerHTML = ''; // Bersihkan tabel
+
+            if (pinjamanData.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="text-center">No data available in table</td>
+                    </tr>`;
+                return;
+            }
+
+            pinjamanData.forEach((pinjam, index) => {
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${pinjam.kodePinjam}</td>
+                        <td>${pinjam.anggota}</td>
+                        <td>${pinjam.kategori}</td>
+                        <td>${pinjam.judul}</td>
+                        <td>${pinjam.tanggalPinjam}</td>
+                        <td>${pinjam.tanggalKembali}</td>
+                        <td>${pinjam.denda}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="deletePinjaman(${pinjam.kodePinjam})">Hapus</button>
+                        </td>
+                    </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // Fungsi untuk menghapus peminjaman
+        function deletePinjaman(kodePinjam) {
+            const index = pinjamanData.findIndex(p => p.kodePinjam === kodePinjam);
+            if (index !== -1) {
+                pinjamanData.splice(index, 1);
+                refreshPinjamanTable();
+            }
+        }
+    </script>
+</body>
+</html>
